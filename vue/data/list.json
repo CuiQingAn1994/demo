@@ -1,0 +1,38 @@
+{
+	"errno":0,
+	"data":{
+		"nav":[
+			{"title":"新品","id":"id"},
+			{"title":"价格↓↑","id":"price"},
+			{"title":"销量↓↑","id":"sales"},
+			{"title":"筛选","id":"choose"}
+		],
+		"list":[
+			{"id":0,"title":"小新 Air 13 Pro-13IKB 13.3英寸超轻薄笔记本 银色80WF000DCD","url":"01.jpg","sales":1001,"price":7469.00},
+			{"id":1,"title":"YOGA 720-15IKB15.6英寸触控笔记本 天蝎黑 80X7000DCD","url":"02.jpg","sales":200,"price":6469.00},
+			{"id":2,"title":"小新 Air 13 Pro-13IKB 13.3英寸超轻薄笔记本 白色80WF000DCD","url":"03.jpg","sales":300,"price":5469.00},
+			{"id":3,"title":"小新 Air 13 Pro-13IKB 13.3英寸超轻薄笔记本 黑色80WF000DCD","url":"04.jpg","sales":400,"price":4469.00},
+			{"id":4,"title":"小新 Air 13 Pro-13IKB 13.3英寸超轻薄笔记本电脑 绿色80WF000DCD","url":"05.jpg","sales":500,"price":3469.00},
+			{"id":5,"title":"小新 Air 13 Pro-13IKB 13.3英寸超轻薄笔记本电脑 蓝色80WF000DCD","url":"06.jpg","sales":600,"price":2469.00},
+			{"id":6,"title":"小新 Air 13 Pro-13IKB 13.3英寸超轻薄笔记本电脑 银色80WF000DCD","url":"07.jpg","sales":700,"price":1469.00},
+			{"id":7,"title":"小新 Air 13 Pro-13IKB 13.3英寸超轻薄笔记本电脑 银色80WF000DCD","url":"08.jpg","sales":800,"price":8469.00},
+			{"id":8,"title":"小新 Air 13 Pro-13IKB 13.3英寸超轻薄笔记本 银色80WF000DCD","url":"09.jpg","sales":900,"price":10469.00},
+			{"id":9,"title":"小新 Air 13 Pro-13IKB 13.3英寸超轻薄笔记本 银色80WF000DCD","url":"10.jpg","sales":1000,"price":9469.00},
+			{"id":10,"title":"小新 Air 13 Pro-13IKB 13.3英寸超轻薄笔记本 银色80WF000DCD","url":"11.jpg","sales":1100,"price":569.00},
+			{"id":11,"title":"小新 Air 13 Pro-13IKB 13.3英寸超轻薄笔记本 银色80WF000DCD","url":"12.jpg","sales":1200,"price":469.00},
+			{"id":12,"title":"小新 Air 13 Pro-13IKB 13.3英寸超轻薄笔记本 银色80WF000DCD","url":"13.jpg","sales":1300,"price":369.00},
+			{"id":13,"title":"小新 Air 13 Pro-13IKB 13.3英寸超轻薄笔记本 银色80WF000DCD","url":"14.jpg","sales":1400,"price":269.00}
+		],
+		"choose":[
+			{"title":"Lenovo笔记本"},
+			{"title":"Think笔记本"},
+			{"title":"Lenovo台式机"},
+			{"title":"Think台式机"},
+			{"title":"Lenovo平板电脑"},
+			{"title":"Think平板电脑"},
+			{"title":"打印机"},
+			{"title":"智能数码"},
+			{"title":"我要服务"}
+		]
+	}
+}

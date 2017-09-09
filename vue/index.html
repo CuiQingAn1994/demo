@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+	<title>联想</title>
+	<link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+	<div id="app">
+		<!-- <h1>联想</h1> -->
+		<!-- 定义容器元素 -->
+		<!-- <component is='home'></component> -->
+		<keep-alive include="list,home">
+
+			<router-view></router-view>
+		</keep-alive>
+	</div>
+	<template id="tpl_home">
+		<section class="header home">
+			<ul class="clear lunbo"  @touchstart="start" @touchmove="move" @touchend="end" :style="'marginLeft:'+left+'px; transition:all '+time+'s ease 0s'">
+				<li v-for="item in banner_img"><img :src="'img/home/banner/'+item.url" alt=""></li>
+			</ul>
+			<div class="search">
+				<a href="#/list">
+				<span><img src="img/spr/search.png" alt=""></span>
+				<input type="text" placeholder="输入想搜索的内容">	
+				</a>
+			</div>
+			<div class="nav">
+				<ul class="clear">
+					<li v-for="item in nav">
+						<a :href="'#/list/'">
+							<img :src="'img/home/nav/'+item.url" alt="">
+							<h3>{{item.title}}</h3>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<ul class="ad">
+				<li v-for="item in ad">
+					<a :href="'#/list/'+item.id"><img :src="'img/home/ad/'+item.url" alt=""></a>
+				</li>
+			</ul>
+			<div class="moddle">
+				<a href="#/detail/01"><img src="img/home/banner/moddle.jpg" alt=""></a>
+			</div>
+			<div class="low_price">
+				<div class="more">
+					<span class="text_img">
+						<img src="img/home/low_price/down.png" alt="">
+						下单立减
+					</span>
+					<a :href="'#/list/'">
+						<span class="more">
+						更多<span class="gt">&gt;</span>
+						</span>
+					</a>
+				</div>
+				<ul class="clear">
+					<li v-for="item in lowPrice">
+						<a :href="'#/detail/'+item.id">
+							<img :src="'img/home/low_price/'+item.url" alt="">
+							<p class="title">{{item.title}}</p>
+							<p>
+								<span class="price">¥{{item.price}}</span>
+								<span class="reduce">{{item.reduce}}元</span>
+							</p>
+						</a>
+						
+					</li>
+				</ul>
+			</div>
+			<div class="commend">
+				<div class="com">
+					<img src="img/spr/commend.png" alt="">
+					<span> 推 荐 </span>
+				</div>
+				<ul class="clear">
+					<li v-for="item in commend">
+						<a :href="'#/detail/'+item.id">
+							<img :src="'img/home/commend/'+item.url" alt="">
+							<p class="title">{{item.title}}</p>
+							<p class="price">¥{{item.price}}</p>
+						</a>
+						
+					</li>
+				</ul>
+			</div>
+			<div class="fix clear" id="fix">
+				<ul>
+					<li><a href="#/home"><img src="img/spr/main.png" alt=""><span>首页</span></a></li>
+					<li><a href="#/class"><img src="img/spr/class.png" alt=""><span>分类</span></a></li>
+					<li><a href="#/shopcar"><img src="img/spr/shop.png" alt=""><span>购物车</span></a></li>
+					<li><a href="#/login"><img src="img/spr/my.png" alt=""><span>我的</span></a></li>
+				</ul>
+			</div>
+		</section>
+	</template>
+	<template id="tpl_list">
+		<section class="list">
+			<div class="header clear">
+				<a href="#/home"><span class="back">&lt;</span></a>
+				<div class="search clear">
+					<span><img src="img/spr/search.png" alt=""></span>
+					<input type="text" v-model="haha">
+					<span v-if="haha" @click="close"><img  src="img/spr/close.png" alt=""></span>
+				</div>
+				<span class="btn">搜索</span>
+			</div>
+			<div class="nav">
+				<ul class="clear">
+					<li v-for="(item,index) in nav" @click="check(index,item.id)" :style="{
+					color:index===li_index?'#e2231a':'#959595',
+					}" >{{item.title}}</li>
+				</ul>
+			</div>
+			<div class="show">
+				<ul>
+					<li v-for="item in dealList" class="clear">
+						<a :href="'#/detail/'+item.id">
+							<img :src="'img/list/'+item.url" alt="">
+							<div>
+								<p class="title">{{item.title}}</p>
+								<span class="price">¥{{item.price}}.00</span>
+								<span class="sales">{{item.sales}}人购买</span>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div :class="{choose:'true',wid:wid}" >
+				<div class="left"></div>
+				<div class="right">
+					<div class="header">
+						<span @click="back">&lt;</span>
+						<span>分类筛选</span>
+						<span @click="back">取消</span>
+					</div>
+					<div class="body">
+						<span  v-for="item in choose" @click="click(item.title)">{{item.title}}</span>
+					</div>
+				</div>
+			</div>
+		</section>
+	</template>
+	<template id="tpl_detail">
+		 <section class="detail">
+		 	<div class="header clear">
+		 		<a href="#/home"><span>&lt;</span></a>
+		 		<ul class="clear">
+		 			<li>商品</li>
+		 			<li>详情</li>
+		 			<li>配置</li>
+		 			<li>评价</li>
+		 		</ul>
+		 	</div>
+		 	<div class="first">
+		 		<ul class="lunbo clear" :style="'margin-left:'+left+'px; transition:all '+time+'s ease 0s'" @touchstart="start" @touchmove="move" @touchend="end">
+		 			<li v-for="item in lunbo"><img :src="'img/detail/'+item.url" alt=""></li>
+		 		</ul>
+		 		<ul class="circle clear">
+		 			<li v-for="(item,index) in circle" :class="{cur:index===idxc}"></li>
+		 		</ul>
+		 		<div class="msg">
+		 			<p class="id">{{msg.id}}</p>
+		 			<h5 class="title">{{msg.title}}</h5>
+		 			<h6 class="stitle">{{msg.stitle}}</h6>
+		 			<p class="intro">{{msg.introduce}}</p>
+		 			<p class="gift">{{msg.gift}}</p>
+		 			<p class="price">¥{{msg.price}}</p>
+		 		</div>
+		 		<div class="xinghao clear" >
+		 			<div class="name">E570</div>
+		 			<ul>
+		 				<li v-for="(item,index) in choose" @click="check(index)" :style="{'borderColor':index===checkIndex?'red':'#bbb'}">{{item.inner}}</li>
+		 			</ul>
+		 		</div>
+		 		<div class="shopNum clear">
+		 			<div>购买数量</div>
+		 			<ul class="clear">
+		 				<li @click="reduce">－</li>
+		 				<li class="num">{{num}}</li>
+		 				<li @click="add">＋</li>
+		 			</ul>
+		 		</div>
+		 		<div class='space'></div>
+		 	</div>
+		 	<div class="second"></div>
+		 	<div class="third"></div>
+		 	<div class="footer clear">
+		 		<ul class="clear">
+		 			<li><a href="">客服</a></li>
+		 			<li><a href="">收藏</a></li>
+		 			<li><a href="">购物车</a></li>
+		 		</ul>
+		 		<a href="" class="btn">立即购买</a>
+		 	</div>
+		 </section>
+	</template>
+	<template id="tpl_class">
+		<section class="class">
+			<div class="header">
+				<a href="#/home"><span class="back">&lt;</span></a>
+				<span class="title">产品分类</span>
+				<img src="img/spr/menu.png" alt="" @click="hide">
+			</div>
+			<div class="show" :style="'height:'+show+'px'">
+				<ul>
+					<li><a href="#/home"><img src="img/spr/main.png" alt="">首页</a></li>
+					<li><a href="#/list"><img src="img/spr/search.png" alt="">搜索</a></li>
+					<li><a href="#/login"><img src="img/spr/my.png" alt="">个人中心</a></li>
+				</ul>
+			</div>
+			<div class="body">
+				<ul>
+					<li v-for="item in cla">
+						<a href="#/list">
+							<img :src="'img/class/'+item.url" alt="">
+							<span>{{item.title}}</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</section>
+	</template>
+	<template id="tpl_car">
+		<section class="car">
+			<div class="header">
+				<a href="#/home"><span class="back">&lt;</span></a>
+				<span class="title">购物车</span>
+				<img src="img/spr/menu.png" alt="" @click="hide">
+			</div>
+			<div class="show" :style="'height:'+show+'px'">
+				<ul>
+					<li><a href="#/home"><img src="img/spr/main.png" alt="">首页</a></li>
+					<li><a href="#/list"><img src="img/spr/search.png" alt="">搜索</a></li>
+					<li><a href="#/login"><img src="img/spr/my.png" alt="">个人中心</a></li>
+				</ul>
+			</div>
+			<div class="body">
+				<img src="img/shopCar/nopro.jpg" alt="">
+				<h3>购物车空空如也，快去购物吧</h3>
+				<a href="#/list">去逛逛</a>
+			</div>
+		</section>
+	</template>
+	<template id="tpl_login">
+		<section class="login">
+			<div class="header">
+				<a href="#/home"><span class="back">&lt;</span></a>
+				<span class="title">联想商城登录</span>
+				<img src="img/spr/menu.png" alt="" @click="hide">
+			</div>
+			<div class="show" :style="'height:'+show+'px'">
+				<ul>
+					<li><a href="#/home"><img src="img/spr/main.png" alt="">首页</a></li>
+					<li><a href="#/list"><img src="img/spr/search.png" alt="">搜索</a></li>
+					<li><a href="#/login"><img src="img/spr/my.png" alt="">个人中心</a></li>
+				</ul>
+			</div>
+			<div class="body">
+				<div class="hover clear">
+					<span v-for="(item,index) in login" @click="choose(index)" :style="{
+					borderBottomColor:index===idx? 'red':'#C0C0C0',
+					color:index===idx? 'red':'#797979'
+				}">{{item.title}}</span>
+					
+				</div>
+				<div class="form">
+					<form action="">
+						<div class="fast" v-if="!idx">
+							<p><input type="text" placeholder="请输入手机号" v-model="phone" @keyup="checkPhone"></p>
+							<p><input type="text" placeholder="请输入验证码"><img src="img/login/img.png" alt=""></p>
+							<p><input type="text" placeholder="动态密码"><span @click="psd">{{msg}} <i v-if="typeof msg==='number'">S</i></span></p>
+							<span class="tip">{{check}}</span>
+						</div>
+						<div class="common"v-else>
+							<p><input type="text" placeholder="请输入手机号" v-model="phone" @keyup="checkPhone"></p>
+							<p><input type="password" placeholder="密码"><span >忘记密码</span></p>
+							<span class='tip'>{{check}}</span>
+						</div>
+						<input type="submit" class="btn" value="登录">
+					<!-- <a href="" class="regist">立即注册</a> -->
+					</form>
+				</div>
+			</div>
+		</section>
+	</template>
+	<script type="text/javascript" src='pack/pack.js'></script>
+</body>
+</html>

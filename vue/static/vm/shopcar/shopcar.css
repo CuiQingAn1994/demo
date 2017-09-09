@@ -1,0 +1,70 @@
+/*********************************
+			购物车
+***************************/
+.car .header{
+	width:100%;
+	position: fixed;
+	top:0px;
+	height:45px;
+	background: #E8E8E8; 
+	text-align: center;
+	line-height: 45px;
+	border-bottom: 1px solid #C0C0C0;
+}
+
+.car .header span.back{
+	float: left;
+	font-family: cursive;
+	font-size: 25px;
+	margin-left:20px;
+}
+.car .header img{
+	float: right;
+	width:30px;
+	margin-right:20px;
+	margin-top:7.5px;
+}
+.car .body{
+	text-align: center;
+	padding-top:96px;
+}
+.car .body h3{
+	color:#959595;
+	font-weight: normal;
+	line-height: 80px;
+
+}
+.car .body a{
+	display: inline-block;
+	width: 98px;
+	height: 35px;
+	background: #E0524B;
+	color:#fff;
+	font-size: 20px;
+	line-height: 35px;
+	border-radius: 5px;
+
+}
+.car .show {
+	transition:all 1s ease 0s;
+	overflow: hidden;
+	height:40px;
+	width: 100%;
+	position: fixed;
+	top:46px;
+	background: rgba(255,255,255,.9);
+	line-height:40px;
+	color:#000;
+}
+.car .show ul{
+	padding-left:40px;
+}
+.car .show ul li{
+	float: left;
+	width:33.33333333%;
+	font-size: 12px;
+	
+}
+.car .show ul li img{
+	width:16px;
+}

@@ -1,0 +1,845 @@
+
+String.prototype.trim=function() {
+    return this.replace(/(^\s*)|(\s*$)/g,'');
+};
+
+function getLeid(){
+    var res = "";
+    var arr = document.cookie.split(';');
+    for(var i=0;i<arr.length;i++){
+        if(arr[i].split('=')[0].trim() == "leid"){
+            res = arr[i].split('=')[1];
+            break;
+        }
+    }
+    return res;
+}
+
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) {
+        return decodeURIComponent(r[2]);
+    }else{
+        return "";
+    }
+}
+
+function ToPrev() {
+    try {
+        //alert('调用android开始');
+        window.HomeIntent.goBack();
+        //document.location = "test:commodityDetailReturn";
+        //alert('调用android结束');
+    }catch (err) {
+        //alert('调用ios开始');
+        document.location = "test:commodityDetailReturn";
+        //alert('调用ios结束');
+    }
+}
+
+//判断是否为小数
+function hasDot(num) {
+    if (!isNaN(num)) {
+        return ((num + '').indexOf('.') != -1) ? true : false;
+    }
+}
+
+//将字符串转换为数字
+function toDecimal(x) {
+    var val = Number(x)
+    if (!isNaN(parseFloat(val))) {
+        val = val.toFixed(2);
+    }
+    return val;
+}
+
+
+var search = function(){
+    var that = this;
+
+    this.categoryId = "";
+    this.index = "";
+    this.filterCharArray = [];
+
+    function filterGlobalKey(key){
+        var res = key;
+
+        //设置大类别
+        var bl = {tag:false,val:""};
+
+        for(var i =0;i<that.filterCharArray.length;i++){
+            if (res.trim().toLowerCase() == that.filterCharArray[i].name.trim().toLowerCase()) {
+                bl={tag:true,val:that.filterCharArray[i].val};
+            }
+        }
+
+        if(bl.tag){
+            that.categoryId = bl.val;
+            that.bigCategoryName = res;
+            //that.globalKey = "";
+        }
+        else{
+            that.categoryId = "";
+        }
+
+        //过滤关键字
+        for(var i=0;i<that.filterCharArray.length;i++){
+            if(res.toLowerCase() == that.filterCharArray[i].name.toLowerCase()){
+                res = "";
+                break;
+            }
+        }
+
+        return res;
+    }
+
+    this.globalKey = "";
+
+    this.platform = "";
+
+    this.pageIndex = 1;
+    this.pageSize = 10;
+
+    this.searchSection = $(".resultSection");
+    this.historyContainer = $(".search-content");
+    this.searchResultContainer = $(".result-list");
+
+    this.bigCategory = $(".search-cate");
+    this.smallCategory = $(".series");
+
+    this.bigCategoryName = "";
+
+    this.resultListContainer = $("#resultUL");
+
+    this.envirement = location.href.indexOf("s.lenovo.com.cn") > -1 ? "PRODUCTION" : "UAT";
+    this.goBackParm = getQueryString("gobackall") ? $.trim(getQueryString("gobackall")) == "1" ? getQueryString("gobackall") : "0" : "0";
+    //默认排序
+    this.sortNumber = 0;
+
+    this.filter = "";
+
+    this.totleCount = 0;
+
+    function fiterdata(data,categoryId) {
+        data.each(function () {
+            if ($(this).attr("tag") == categoryId)
+            {
+                $(this).show().siblings().hide();
+                return;
+            }
+        });
+    }
+
+    this.searchFilterAnimate = function(){
+
+        $("body").delegate(".filter-btn","tap",function(){
+            $(".filter-popup, .maskbg ,.cate_btn").addClass("in");
+            if(that.filter == "" && that.categoryId == ""){
+                that.bigCategory.show();
+                that.smallCategory.hide();
+                $("#categoryName").text("分类筛选");
+                $(".cate_btn").removeClass("in");
+            }
+            else if(that.filter == "" && that.categoryId != ""){
+                that.bigCategory.hide();
+                that.smallCategory.show();
+                fiterdata($(".cate_detail"), that.categoryId);
+                $("#categoryName").text(that.bigCategoryName);
+            }else if(that.filter != "" && that.categoryId != ""){
+                that.bigCategory.hide();
+                that.smallCategory.show();
+                fiterdata($(".cate_detail"), that.categoryId);
+            }
+        })
+
+        //关闭筛选条件
+        function closeFilter(){
+            $(".filter-popup, .maskbg ,.cate_btn").removeClass("in");
+        }
+
+        $("body").delegate(".maskbg,.filter-reset","tap",function(){
+            closeFilter();
+            that.categoryId = "";
+            that.filter = "";
+        })
+    }
+
+    this.setBigCategoryName = function(){
+        $("#categoryName").text(this.bigCategoryName);
+    }
+
+    function checkDefaultCate(cateid){
+        var bl = false;
+        $(".search-cate li").each(function(){
+            if($(this).attr("tag") == that.categoryId){
+                that.bigCategoryName = $(this).find("a").text();
+                $("#categoryName").text(that.bigCategoryName);
+                bl = true;
+                return false;
+            }
+        })
+        return bl;
+    }
+
+    function getCurrentCategoryContainer(){
+        var index = -1;
+        $(".search-cate li").each(function(i){
+            if($(this).attr("tag") == that.categoryId){
+                index = i;
+                return false;
+            }
+        })
+        return index;
+    }
+
+    function setSmallCategoryCss(ids){
+        var _index = getCurrentCategoryContainer();
+        that.index = _index;
+
+        var _mainC = $(".series div.cate_detail").eq(_index);
+
+        var _c = _mainC.find("li a");
+        _mainC.show().siblings().hide();
+        //_mainC.find(".show_all").removeClass("show_all");//.addClass("show_up");
+
+        for(var i =0;i<ids.length;i++){
+            _c.each(function(){
+                if(ids[i] == $(this).attr("data-value")){
+                    $(this).parent().addClass("active");
+                }
+            })
+        }
+    }
+
+    function getSmallCatesFromUrl(){
+        var res = [];
+        var _f = that.filter;
+        if(_f == ""){
+            return res;
+        }
+        //335:011405,01140318@336:3000-3999
+        var _arr = _f.split('@');
+        for(var i =0;i<_arr.length;i++){
+            var tmp = _arr[i].split(':')[1].split(',');
+            for(var j = 0;j<tmp.length;j++){
+                res.push(tmp[j]);
+            }
+        }
+        return res;
+    }
+
+    this.init = function(){
+
+        this.platform = getQueryString("platform");
+
+        this.bigCategory.find("a").each(function(){
+            that.filterCharArray.push({name:$(this).text(),val:$(this).parent().attr("tag")});
+        })
+
+        this.globalKey = getQueryString("key");
+        $("#search_key").val(this.globalKey);
+
+        this.globalKey = filterGlobalKey(this.globalKey);
+        this.categoryId = getQueryString("cate");
+        this.filter = getQueryString("filter");
+        //check cateid
+        var bl = checkDefaultCate(this.categoryId);
+        if(bl == false){
+            this.categoryId = "";
+            this.bigCategoryName= "";
+        }
+
+        var key = $("#search_key").val();
+        var cid = this.categoryId;
+        var filter = this.filter;
+        if(key == ""){
+            if(cid != ""){
+                var valArr = getSmallCatesFromUrl();
+                setSmallCategoryCss(valArr);
+                $("#search_key").attr("placeholder",that.bigCategoryName);
+                this.historyContainer.hide();
+                this.searchSection.show();
+                this.loadDataByParams(false);
+            }else{
+                this.historyContainer.show();
+                this.searchSection.hide();
+                $(".search-delete").hide();
+            }
+        }else{
+            if(cid != ""){
+                var valArr = getSmallCatesFromUrl();
+                setSmallCategoryCss(valArr);
+                $("#search_key").attr("placeholder",getQueryString("placeholder"));
+            }
+            this.historyContainer.hide();
+            this.searchSection.show();
+            $(".search-delete").show();
+            this.loadDataByParams(false);
+        }
+
+        this.regEvent();
+        this.getHistory();
+    }
+
+    this.showAllSmallCategory = function(){
+        $("body").delegate(".series i.show_all","tap",function(){
+            var tag = $(this).hasClass("show_down");
+            var _ul = $(this).parent().next();
+            var _height = parseInt(_ul.height());
+
+            if(tag){
+                if(_height == 68){
+                    $(this).parent().next().css("height","auto");
+                }else{
+                    $(this).parent().next().css("height","auto");
+                }
+                $(this).removeClass("show_down").addClass("show_up");
+            }else{
+                if(_height >= 68){
+                    $(this).parent().next().css("height","68px");
+                }else{
+                    $(this).parent().next().css("height","auto");
+                }
+                $(this).removeClass("show_up").addClass("show_down");
+            }
+
+        })
+    }
+
+    this.regEvent = function(){
+        this.searchFilterAnimate();
+        this.selectBigCategoryEvent();
+        this.seriesBackEvent();
+        this.searchButtonEvent();
+        this.selectSmallCategoryEvent();
+        this.doSearchEvent();
+        this.sortEvent();
+        this.headerBackEvent();
+        this.historyClickEvent();
+        this.delHistory();
+        this.suggestEvent();
+        this.goDetailPageEvent();
+        this.showAllSmallCategory();
+        this.loadMoreEvent();
+    }
+
+    this.renderHistory = function(data){
+        var html = "";
+        for(var i=0;i<data.length;i++){
+            html += "<li tag='his' val='"+data[i].word+"'><a>"+data[i].word+"</a></li>";
+        }
+        $("#search_history").append($(html));
+    }
+
+    this.historyClickEvent = function(){
+        $("body").delegate("#search_history li[tag=his]","tap",function(){
+            var _val =  $(this).find("a").text();
+            that.globalKey =_val;
+            that.globalKey = filterGlobalKey(that.globalKey);
+            $("#search_key").val(_val);
+
+            $(that.searchSection).show();
+            $(that.historyContainer).hide();
+            $(".search-delete").show();
+
+            that.categoryId = "";
+            that.filter = "";
+
+            that.loadDataByParams(true);
+        })
+    }
+
+    function checkIsChoosed(container){
+        var choosed = [];
+        var chooseNames = [];
+        var res = {bl:false,chooseRes:"",chooseNames:""};
+        $(container).find("li").each(function(){
+            if($(this).hasClass("active")){
+                res.bl = true;
+                choosed.push($(this).find("a").attr("data-value"));
+                chooseNames.push($(this).find("a").text());
+            }
+        })
+        if(res.bl){
+            res.chooseRes = $(container).attr("smallcate") + ":" + choosed.join(',');
+            res.chooseNames = chooseNames.join(',');
+        }
+        return res;
+    }
+
+    function getSmallCatesInfo(container){
+        var res = {ids:[],names:[]};
+        $(container).find("li").each(function(){
+            if($(this).hasClass("active")){
+                res.ids.push($(this).find("a").attr("data-value"));
+                res.names.push($(this).find("a").text());
+            }
+        })
+        return res;
+    }
+
+    function getItemsParams(){
+        var resParams = {items:"",itemNames:"",smallCateNames:""};
+        if(this.index == "" || this.categoryId == ""){
+            return resParams;
+        }
+        var currentContainer = $(".series").find("div.cate_detail").eq(that.index);
+
+        var params = [];
+        var paramsNames=[];
+
+        $(currentContainer).find("div.detail_list").each(function(){
+            // 获取选中的系列
+            var temp = $(this).find("h4").text();
+            if(temp.indexOf('系列') != -1) {
+                resParams.smallCateNames = getSmallCatesInfo($(this)).names;
+            }
+            var res = checkIsChoosed($(this));
+            if(res.bl){
+                params.push(res.chooseRes);
+                paramsNames.push(res.chooseNames);
+            }
+        })
+        if(params.length != 0){
+            resParams.items = params.join('@');
+            resParams.itemNames = paramsNames.join('@');
+        }
+        return resParams;
+    }
+
+    this.doSearchEvent = function(){
+        $("body").delegate("#doSearch","tap",function(){
+            var res = getItemsParams();
+            that.filter = res.items;
+            that.globalKey = $("#search_key").val();
+            that.sortNumber = "0";
+
+            $(".result-sort li[tag=sort]").attr("class","");
+
+            that.loadDataByParams(true);
+            $("#bigCateName").text(that.bigCategoryName);
+            if(res.smallCateNames.length == 0){
+                $("#smallCateName").text("所有系列");
+            }else{
+                $("#smallCateName").text(res.smallCateNames.join(','));
+            }
+            $(".filter-popup,.maskbg,.cate_btn").removeClass("in");
+        })
+
+        $("body").delegate(".reset","tap",function(){
+            that.resetFilter();
+        })
+    }
+
+    this.selectSmallCategoryEvent = function(){
+        $("body").delegate("div.series li","tap",function(){
+            var isActive = $(this).hasClass("active");
+            if(isActive){
+                $(this).removeClass("active");
+            } else{
+                $(this).addClass("active");
+            }
+        })
+    }
+
+    function resetSortClass(target,priceTag){
+        if(priceTag == false){
+            $(".result-sort li[tag=sort]").each(function(){
+                $(this).removeClass("active");
+            })
+            $(target).addClass("active");
+        } else{
+            $(".result-sort li[tag=sort]").each(function(){
+                if(!$(this).attr("price")){
+                    $(this).removeClass("active");
+                }
+            })
+            var cls = $(target).hasClass("active");
+            if(!cls){
+                $(target).attr("class","active active-up");
+                that.sortNumber = 4;
+            }else{
+                var clsName = $(target).hasClass("active-up");
+
+                if(clsName){
+                    $(target).attr("class","active active-down");
+                    that.sortNumber = 3;
+                }else{
+                    $(target).attr("class","active active-up");
+                    that.sortNumber = 4;
+                }
+            }
+        }
+
+    }
+
+    this.sortEvent = function(){//tap
+        $("body").delegate(".result-sort li[tag=sort]","tap",function(){
+
+            //是否点击的是价格
+            if($(this).attr("price")){
+                resetSortClass($(this),true);
+            }
+            else{
+                that.sortNumber = $(this).attr("val");
+                if($(this).hasClass("active")){
+                    return;
+                }
+                resetSortClass($(this),false);
+            }
+            that.loadDataByParams(true);
+        })
+    }
+
+    this.headerBackEvent = function(){
+        $("body").delegate(".top_back", "tap", function () {
+            //if (that.goBackParm == "1") {
+            //    history.go(-1);
+            //} else {
+            //    var sectionTag = $(that.searchSection).css("display");
+            //    var hisTag = $(that.historyContainer).css("display");
+            //    if (sectionTag == "block") {
+            //        $(that.searchSection).hide();
+            //        $(that.historyContainer).show();
+            //    }
+            //    if (sectionTag == "none" && hisTag == "block") {
+            //        window.location.href = configData.backUrl;
+            //    }
+            //}
+            history.go(-1);
+        });
+    }
+
+    //tag=true就先清空，为false就为向下追加
+    this.loadDataByParams = function(tag){
+        if(tag){
+            this.pageIndex = 1;
+        }
+
+        var innerKey =$("#keyInResult").val();
+        var sort = this.sortNumber;
+
+        var leid = "";
+        if(this.platform == ""){
+            leid = getLeid();
+        }
+
+        if (this.categoryId != "")
+        {
+            this.globalKey = "";
+        }
+
+        var url = "/search/wap?key="+encodeURIComponent(this.globalKey)+"&filter="+encodeURIComponent(this.filter)+"&stort="+ sort + "&category="+this.categoryId+
+            "&page=" + this.pageIndex + "&pageSize=" + this.pageSize + "&leid=" + leid + "&plat=" + configData.plat;
+
+        $.ajax({
+            url:url,
+            success:function(d){
+                d = eval("("+d+")");
+                if(d.rc != "0"){
+                    $(that.resultListContainer).html("<li style='text-align: center;color: #7D7D7D;background-color: #eee;border:0;padding-top: 100px;font-size: 1.4rem;'>哎呀 出错了，再试下吧~</li>");
+                    $(".load-more").hide();
+                    return;
+                }
+                if(d.items.length == 0){
+                    $(that.resultListContainer).html("<li style='text-align: center;color: #7D7D7D;background-color: #eee;border:0;padding-top: 100px;font-size: 1.4rem;'>抱歉，没有找到相关的商品</li>");
+                    $(".load-more").hide();
+                    return;
+                }
+                that.totleCount = d.totalNum;
+                that.render(d.items,tag);
+
+                if(that.totleCount > that.pageIndex*that.pageSize){
+                    that.pageIndex++;
+                    $(".load-more").show();
+                    that.loadMoreTag = true;
+                    that.readyData = true;
+                }else{
+                    $(".load-more").hide();
+                    that.loadMoreTag = false;
+                    that.readyData = false;
+                }
+            },
+            error:function(){
+                $(that.resultListContainer).html("<li style='text-align: center;color: #7D7D7D;background-color: #eee;border:0;padding-top: 100px;font-size: 1.4rem;'>哎呀 出错了，再试下吧~</h1>");
+            }
+        })
+    }
+
+    this.checkisMachineNo = function (machineNo) {
+        machineNo = $.trim(machineNo);
+        var wd = $.trim(machineNo);
+        if (wd.replace(/[0-9a-z]/gi, '') != '') {
+            //self.location.href = '/Products/List.aspx?' + $.param({ wd: machineNo });
+            return false;
+        } else if (wd.length != 8 && wd.length != 10 && wd.length != 14 && wd.length != 18) {
+            //self.location.href = '/Products/List.aspx?' + $.param({ wd: machineNo });
+            return false;
+        } else if (wd.toLowerCase() == "thinkpad") {
+            return false;
+        }
+
+        return true;
+    }
+
+    this.resetFilter = function(){
+        this.filter = "";
+        $(this.smallCategory).find("li").removeClass("active");
+    }
+
+    this.searchButtonEvent = function(){
+        $("body").delegate(".search-button", "tap", function () {
+            var _val = $("#search_key").val();
+            if (that.checkisMachineNo(_val)) {
+                window.location.href = urlConfig[that.envirement].baseUrl + "m/service_index.html?machineno=" + _val;
+            } else {
+                that.resetFilter();
+                that.globalKey = $("#search_key").val();
+                that.globalKey = filterGlobalKey(that.globalKey);
+                that.loadDataByParams(true);
+                that.historyContainer.hide();
+                that.searchSection.show();
+                $("#search_key").blur();
+                $("#search_key").removeAttr("placeholder");
+            }
+        })
+    }
+
+    this.render = function(data,tag){
+        if(tag){
+            $(this.resultListContainer).html("");
+            $(this.resultListContainer).find("li").remove();
+        }
+        var html = "";
+        var length = data.length<=this.pageSize?data.length:this.pageSize;
+        for(var i=0;i<length;i++){
+            html += "<li  mallType='" + data[i].mallType + "' code='" + data[i].code + "'>";
+            if (data[i].path) {
+                html += "<div class='img-box'><a><img tag='detail' platnum='" + data[i].goodsPlat + "' code='" + data[i].code + "' src='//p1.lefile.cn" + data[i].path + "'></a></div>";
+            } else {
+                html += "<div class='img-box'><a><img tag='detail' platnum='" + data[i].goodsPlat + "' code='" + data[i].code + "' src='//p1.lefile.cn/g1/M00/00/87/CmBZEFZgOc2ATUeIAAAJwF5r7O8764.jpg'></a></div>";
+            }
+            html += "<div class='result-content'>";
+            html += "<h6><a tag='detail' platnum='" + data[i].goodsPlat + "' code='" + data[i].code + "'>" + data[i].name + "</a></h6>";
+            if (data[i].isShowPrice == "1") {
+                html += "<div class='price'>¥" + data[i].wapPrice + "</div>";
+            } else if (data[i].isShowPrice == "0") {
+                html += "<div class='price'>暂无报价</div>";
+            }
+
+            html += "</div></li>";
+        }
+        $(this.resultListContainer).append($(html));
+        $(".filter-popup, .maskbg ,.cate_btn").removeClass("in");
+    }
+
+    function goDetail(mallType, code) {
+        _url = configData.LenovoDetailUrl + code + ".html";
+        //if (mallType == "2") {
+        //    _url = configData.ThinkDetailUrl + code + ".html";
+        //}
+        window.location.href = _url;
+    }
+
+    this.goDetailPageEvent = function(){
+        $("body").delegate("#resultUL li", "tap", function () {
+            if ($(this).attr("code")) {
+                goDetail($(this).attr("mallType"), $(this).attr("code"));
+            }
+        })
+    }
+
+    this.selectBigCategoryEvent = function(){
+        $("body").delegate(".search-cate li","tap",function(){
+
+            var isClick = $(this).attr("clicked");
+
+            that.categoryId = $(this).attr("tag");
+            that.bigCategoryName = $(this).find("a").text();
+            $("#search_key").attr("placeholder",that.bigCategoryName);
+
+            that.setBigCategoryName();
+            that.index = $(this).index();
+            $(".series").show();
+            $(this).parent().parent().hide();
+
+            var _c = $(".series div.cate_detail").eq(that.index);
+
+            _c.show().siblings().hide();
+            $(".cate_btn").addClass("in");
+
+            if(!isClick){
+                //必须在显示之后才能获取到高度,并且重新设置
+                _c.find(".detail_list ul").each(function(){
+                    var height = $(this).height();
+                    if(parseInt(height) > 68){
+                        $(this).css("height","68px");
+                    }else{
+                        $(this).prev().find("i").hide();
+                    }
+                })
+                $(this).attr("clicked",true);
+            }
+        })
+    }
+
+    this.seriesBackEvent = function(){
+        $("body").delegate(".filter-back","tap",function(){
+            var bigCate = that.bigCategory.css("display");
+            var smallCate = that.smallCategory.css("display");
+            if(bigCate == "block" && smallCate == "none"){
+                $(".filter-popup, .maskbg ,.cate_btn").removeClass("in");
+            }
+            if(bigCate == "none" && smallCate == "block"){
+                that.bigCategory.show();
+                that.smallCategory.hide();
+                $("#categoryName").text("分类筛选");
+                $(".cate_btn").removeClass("in");
+            }
+        })
+    }
+
+    this.getHistory = function(){
+        $.ajax({
+            url:configData.getHistory+"search/history?plat="+configData.plat+"&leid="+getLeid(),
+            type:"get",
+            jsonp: "cb",
+            dataType:"jsonp",
+            success:function(d){
+                if(d.rc == "0"){
+                    if(d.s.length != 0){
+                        that.renderHistory(d.s);
+                        $(".clear-history").show();
+                    }else{
+                        $(".clear-history").hide();
+                    }
+                }else{
+                    $(".clear-history").hide();
+                }
+            }
+        })
+    }
+
+    this.delHistory = function(){
+        $("body").delegate("#delHis","tap",function(){
+            if($("#search_history li").length == 0){
+                return;
+            }
+            $.ajax({
+                url:configData.delHistory+"/search/historyDelete?plat="+configData.plat+"&leid="+getLeid(),
+                type:"get",
+                jsonp: "cb",
+                dataType:"jsonp",
+                success:function(d){
+                    if(d.rc == "0"){
+                        $("#search_history li").remove();
+                        $("#delHis").hide();
+                    }
+                }
+            })
+        })
+    }
+
+    function getSuggestContent(data){
+        var _val = $("#search_key").val().trim();
+        if(_val != ""){
+            $.ajax({
+                url:configData.getSuggest+"search/wapSuggest?plat="+configData.plat+"&leid="+getLeid()+"&kw="+_val,
+                type:"get",
+                jsonp: "cb",
+                dataType:"jsonp",
+                success:function(d){
+                    if(d.rc == "0"){
+                        var data = d.s;
+                        if(data.length != 0){
+                            $("#suggestContainer").html("");
+                        }
+                        var html = "<ul>";
+
+                        if(data.length != 0){
+                            for(var i =0;i<data.length;i++){
+                                html += "<li><a tag='suggest' val='"+data[i].word+"'>"+data[i].word+"</a></li>";
+                            }
+                            html += "</ul>";
+                            $("#suggestContainer").append($(html));
+                        }
+                        $("#suggestContainer").show();
+                    }
+                }
+            })
+        }
+        else{
+            $("#suggestContainer").html("").hide();
+        }
+    }
+
+    $("body").on("tap",function(event){
+        if(event.target.id == "search_key"){
+            getSuggestContent();
+        }else{
+            $("#suggestContainer").hide();
+        }
+    })
+
+    this.suggestEvent = function(){
+
+        $("body").delegate("#search_key","input propertychange",function(){
+            if($(this).val() != ""){
+                $(".search-delete").show();
+            }else{
+                $(".search-delete").hide();
+            }
+            getSuggestContent();
+        })
+
+        $("body").delegate(".search-delete","tap",function(){
+            that.globalKey = "";
+            $("#search_key").val("");
+            $(this).hide();
+
+            that.historyContainer.show();
+            that.searchSection.hide();
+        })
+
+        $("body").delegate("a[tag=suggest]","tap",function(){
+            var _val =  $(this).attr("val");
+            that.globalKey =_val;
+            that.globalKey = filterGlobalKey(that.globalKey);
+            $("#search_key").val(_val).blur();
+
+            that.filter = "";
+            that.categoryId = "";
+
+            $(that.searchSection).show();
+            $(that.historyContainer).hide();
+            $("#suggestContainer").hide();
+            that.loadDataByParams(true);
+            $(".search-delete").show();
+        })
+    }
+
+    this.loadMoreTag = true;
+    this.readyData = true;
+    this.loadMoreEvent = function(tag){
+        window.onscroll = function(){
+            var scrollTop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
+
+            var windowHeight = window.screen.height;
+
+            var documentHeight = document.body.scrollHeight;
+
+            if(scrollTop + windowHeight >= documentHeight - 50){
+                if(that.loadMoreTag && that.readyData){
+                    that.loadMoreTag = false;
+                    that.readyData = false;
+                    //$("#new1").text(that.pageIndex);
+                    that.loadDataByParams(false);
+                }
+            }
+        }
+    }
+}
+
+var s = new search();
+s.init();

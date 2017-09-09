@@ -1,0 +1,16 @@
+{
+	"errno":0,
+	"data":{
+		"cla":[
+			{"url":"pc.png","title":"Lenovo 笔记本"},
+			{"url":"lenovoComputer.png","title":"Lenovo 台式机"},
+			{"url":"think.png","title":"ThinkPad 电脑"},
+			{"url":"pingban-icon.png","title":"平板电脑"},
+			{"url":"card.png","title":"通信卡"},
+			{"url":"service.png","title":"智享服务"},
+			{"url":"sound_box.png","title":"智能音箱"},
+			{"url":"sound_tv.png","title":"智能电视"},
+			{"url":"mobile.png","title":"手机"}
+		]
+	}
+}

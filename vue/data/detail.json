@@ -1,0 +1,42 @@
+{
+	"errno":0,
+	"data":{
+		"lunbo":[
+			{"url":"01.jpg"},
+			{"url":"02.jpg"},
+			{"url":"03.jpg"},
+			{"url":"04.jpg"},
+			{"url":"05.jpg"},
+			{"url":"06.jpg"},
+			{"url":"01.jpg"}
+		],
+		"circle":[
+				{},
+				{},
+				{},
+				{},
+				{},
+				{}
+		],
+		"msg":{
+			"id":"商品编号：20H5A01RCD",
+			"title":"ThinkPad 黑侠E570 GTX 游戏笔记本 20H5A01RCD",
+			"stitle":"i5-7200U/Windows 10 家庭版/8GB/1TB+128G SSD",
+			"introduce":"【发货说明】如果您选择私人定制，我们会在您下单7个工作日后发货，谢谢！",
+			"gift":"【好评有礼】好评赠送联想多媒体桌面音箱，详情请点击了解》》",
+			"price":6799
+		},
+		"choose":[
+			{"inner":"i5/Windows 10 家庭版/4GB/1T/标准版"},
+			{"inner":"i5/Windows 10 家庭版/4GB/1T/标准版"},
+			{"inner":"i5/Windows 10 家庭版/4GB/1T/标准版"},
+			{"inner":"i5/Windows 10 家庭版/4GB/1T/标准版"},
+			{"inner":"i5/Windows 10 家庭版/4GB/1T/标准版"},
+			{"inner":"i5/Windows 10 家庭版/4GB/1T/标准版"}
+		]
+
+	}
+
+
+	
+}

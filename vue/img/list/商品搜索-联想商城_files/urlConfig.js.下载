@@ -1,0 +1,22 @@
+/**
+ * Created by wupeng5 on 2015/12/25.
+ */
+
+var urlConfig = {
+    "UAT":{
+        baseUrl:"//s.lenovouat.com/",
+        LenovoDetailUrl:"//m.lenovouat.com/product/",
+        LenovoDetailUrlApp:"//m.lenovouat.com/android/product/",
+        ThinkDetailUrl:"//mobile.tks.lenovouat.com/pm/",
+        backUrl :"//m.lenovouat.com/"
+    },
+    "PRODUCTION":{
+        baseUrl:"//s.lenovo.com.cn/",
+        LenovoDetailUrl:"//m.lenovo.com.cn/product/",
+        LenovoDetailUrlApp:"//m.lenovo.com.cn/android/product/",
+        ThinkDetailUrl:"//mobile.thinkworldshop.com.cn/pm/",
+        backUrl :"//m.lenovo.com.cn/"
+    },
+    plat:"1",
+    thinkPlat:"5"
+}

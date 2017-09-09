@@ -1,0 +1,212 @@
+.detail .header{
+	width: 100%;
+	height:45px;
+	background: #E3E3E3;
+	line-height: 45px;
+}
+.detail .header span{
+	float: left;
+	width:20%;
+	display: block;
+	font-family: cursive;
+	text-align: center;
+	font-size: 25px;
+	
+}
+.detail .header ul{
+	float: left;
+	width:80%;
+	font-size:14px;
+	color:#919191;
+}
+.detail .header ul li{
+	float: left;
+	width:25%;
+}
+.detail .first {
+	overflow: hidden;
+	/*margin-top:45px;*/
+	position: relative;
+}
+.detail .first .lunbo{
+	width: 700%;
+}
+.detail .first .lunbo li{
+	float: left;
+	width:14.2857143%;
+	border-bottom:1px solid #E3E3E3;
+}
+.detail .first .lunbo li img{
+	width:100%;
+}
+.detail .first .circle {
+	width:98px;
+	height: 8px;
+	position:absolute;
+	left:50%;
+	transform:translateX(-50%);
+	top:305px;
+}
+.detail .first .circle li{
+	width:8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #CCCCCC;
+	float: left;
+	margin-right:10px;
+
+}
+.detail .first .circle li:last-child{
+	margin-right:0px;
+}
+.detail .first .circle li.cur{
+	background: #4C4C4C;
+}
+.detail .first .msg{
+	padding-bottom: 15px;
+	margin-bottom: 10px;
+	border-bottom: 1px solid #ddd;
+}
+.detail .first .msg p{
+	font-size: 12px;
+	line-height: 24px;
+	padding-left: 10px;
+	color:#474747;
+	padding-right:40px;
+}
+.detail .first .msg p.id{
+	padding-top: 10px;
+}
+.detail .first .msg h5{
+	padding-right:40px;
+	font-size: 14px;
+	padding-left: 10px;
+	font-weight: normal;
+	color:#474747;
+	margin-bottom: 10px;
+}
+.detail .first .msg h6{
+	padding-right:40px;
+	padding-left: 10px;
+	font-weight: normal;
+	color:#474747;
+}
+.detail .first .msg .gift{
+	color:#D62F26;
+}
+.detail .first .msg .intro{
+	color:#D62F26;
+}
+.detail .first .msg .price{
+	color:#DE231A;
+	font-size: 20px;
+}
+.detail .first .xinghao{
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	padding:15px;
+	margin-bottom: 10px;
+}
+.detail .first .xinghao .name{
+	width:20%;
+	float: left;
+}
+.detail .first .xinghao ul{
+	width: 80%;
+	float: left;
+	font-size: 13px;
+}
+.detail .first .xinghao ul li{
+	height:32px;
+	line-height: 32px;
+	border: 1px solid #bbb;
+	margin-bottom: 10px;
+	padding:0px 10px;
+	display: block;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	color: #434343;
+	box-sizing:border-box;
+}
+.detail .first .shopNum{
+	border-top: 1px solid #ddd;
+	padding:15px;
+	height:35px;
+	line-height: 35px;
+}
+.detail .first .shopNum div{
+	float: left;
+	margin-right:20px;
+	height:35px;
+}
+.detail .first .shopNum ul{
+	float: left;
+	width:40%;
+	border: 1px solid #B2B2B2;
+
+
+}
+.detail .first .shopNum ul li{
+	height:35px;
+	float: left;
+	width:30%;
+	border-right: 1px solid #B2B2B2;
+	box-sizing:border-box;
+	text-align: center;
+	/*font-size: 14px;*/
+	color:#AEAEAE;
+	font-size: 20px;
+}
+.detail .first .shopNum ul li.num{
+	width:40%;
+	background: #EBEBEB;
+	color:#333;
+	font-size: 15px;
+}
+.detail .first .shopNum ul li:last-child{
+	border-right:none;
+}
+div.space{
+	height: 80px;
+}
+
+
+
+
+
+
+
+/********footer********/
+.detail .footer{
+	width: 100%;
+	height:50px;
+	line-height: 50px;
+	position:fixed;
+	bottom:0px;
+} 
+.detail .footer ul{
+	width:50%;
+	float: left;
+	background: rgba(0,0,0,.7);
+
+}
+.detail .footer ul li{
+	width:33.33333333%;
+	float: left;
+	font-size: 14px;
+	text-align: center;
+
+	
+}
+.detail .footer ul li a{
+	color:#fff;
+}
+.detail .footer a.btn{
+	float: left;
+	display: block;
+	width:50%;
+	background: #E2231A;
+	text-align: center;
+	color:#fff;
+}
